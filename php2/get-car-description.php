@@ -1,6 +1,12 @@
 <?php
 
 header('Access-Control-Allow-Origin: *');
+#$allowed = ['https://cochesviejunos.es' , 'https://www.cochesviejunos.es'];
+#$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+#if (in_array($origin, $allowed)) {
+#	header("Access-Control-Allow-Origin: $origin");
+#	header("Vary: Origin");
+#}
 
 if (isset($_GET['file'])) {
   $filename = $_GET['file'];

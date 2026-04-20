@@ -1,3 +1,9 @@
+<?php
+header("Content-Security-Policy: default-src 'self'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net https://cdn.cochesviejunos.es; object-src 'none';");
+header("X-Frame-Options: DENY");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+?>
 <!DOCTYPE html>
 <html lang="en">
 

