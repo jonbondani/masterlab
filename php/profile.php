@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Generar token si no existe
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   header('Location: login.php');
   exit;
@@ -14,10 +19,21 @@ $query = $db->query('SELECT * FROM users WHERE username = "' . $username . '"');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validar token
+    if (!isset($_POST['csrf_token']) || 
+        !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        http_response_code(403);
+        die('Error: CSRF detectado');
+    }
+
   $newDescription = $_POST['description'];
   $newWeather = $_POST['weather'];
   $db->query('UPDATE users SET description = "' . $newDescription . '" WHERE username = "' . $username . '"');
   $db->query('UPDATE users SET weather = "' . $newWeather . '" WHERE username = "' . $username . '"');
+
+  // Regenerar token tras cada uso
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
   header("Location: success.php");
   exit;
 }
@@ -55,7 +71,8 @@ $weather = htmlspecialchars($user['weather'], ENT_QUOTES, 'UTF-8');
       <div style="margin-top: 15px; margin-bottom: 15px;"><strong>Weather URL:</strong><?php echo $weather; ?></div>
       <h5>Cambiar valores</h5>
       <form action="profile.php?username=<?php echo $username; ?>" method="post">
-        <div class="form-group mb-3">
+	<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+	<div class="form-group mb-3">
           <label>Descripción</label>
           <textarea class="form-control" id="description" name="description" required><?php echo $user['description']; ?></textarea>
           <label>Weather API Url</label>

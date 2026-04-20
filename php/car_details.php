@@ -52,9 +52,10 @@ include('db.php'); ?>
                   <h4>Descripción</h4>
                 <div id="car-description"></div>';
       echo '  </div>
-	      </div>';
+              </div>';
+
       echo '<div class="mt-3">
-		<a href="redirect.php?url=index.php" class="btn btn-secondary">Volver</a>
+              <button onclick="window.location.href=\'redirect.php?url=index.php\'" class="btn btn-secondary">Volver</button>
             </div>';
     } else {
       echo '<p>Coche no encontrado.</p>';
