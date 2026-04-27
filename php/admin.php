@@ -18,6 +18,12 @@ include('header.php');
       include('serde.php');
       if (isset($_COOKIE['user_info'])) {
         $user_info = deser($_COOKIE['user_info']);
+        
+        if ($user_info === null) {
+          echo "<h2>No tienes nada que hacer aquí</h2>";
+          exit;
+        }
+        
         if ($user_info['is_admin'] == true) {
           echo "<h2>Hola: " . $user_info['username'] . "<br><br>Encantado de saludar al ADMINISTRADOR!!<h2>";
         } else {

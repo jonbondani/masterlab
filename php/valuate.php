@@ -2,8 +2,17 @@
 include('header.php');
 
 if (isset($_GET['year']) && isset($_GET['kilometers']) && isset($_GET['condition'])) {
-  $year = $_GET['year'];
-  $kilometers = $_GET['kilometers'];
+  $year = intval($_GET['year']);
+  if ($year < 1900 || $year > date("Y")) {
+    echo "<div class='container my-5'>
+            <div class='alert alert-danger text-center'>
+                Año no válido. Por favor, ingrese un año entre 1900 y " . date("Y") . ".
+            </div>
+          </div>";
+    include('footer.php');
+    exit();
+  }
+  $kilometers = intval($_GET['kilometers']);
   $condition = $_GET['condition'];
 
   $command = "expr 10000 - " . $year;

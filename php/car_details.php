@@ -13,8 +13,11 @@ include('db.php'); ?>
     <?php
     $db = db_connect();
     $id = $_GET['id'];
-    $coche = $db->query('SELECT * FROM coches WHERE id = ' . $id)->fetch_array();
-
+    //$coche = $db->query('SELECT * FROM coches WHERE id = ' . $id)->fetch_array();
+    $stmtCoche = $db->prepare('SELECT * FROM coches WHERE id = ?');
+    $stmtCoche->bind_param('i', $id);  // 'i' = integer
+    $stmtCoche->execute();
+    $coche = $stmtCoche->get_result()->fetch_assoc();
 
     if ($coche) {
       echo '<div class="col-md-6 col-12 mb-4">
@@ -22,14 +25,24 @@ include('db.php'); ?>
                 <div class="mt-3">
                   <h4>Usuarios que han dado "me gusta"</h4>';
 
-      $likesQuery = $db->query('SELECT u.username FROM likes l JOIN users u ON l.user_id = u.id WHERE l.car_id = ' . $id);
+      //$likesQuery = $db->query('SELECT u.username FROM likes l JOIN users u ON l.user_id = u.id WHERE l.car_id = ' . $id);
+      
+      
+      $stmtLikes = $db->prepare('SELECT u.username FROM likes l JOIN users u ON l.user_id = u.id WHERE l.car_id = ?');
+      $stmtLikes->bind_param('i', $id);
+      $stmtLikes->execute();
+      $likesQuery = $stmtLikes->get_result();
       while ($like = $likesQuery->fetch_assoc()) {
         echo '<a href="public_profile.php?username=' . $like['username'] . '" class="badge bg-primary me-1 mb-1">' . $like['username'] . '</a>';
       }
 
       echo '</div>';
 
-      $hasLikedQuery = $db->query('SELECT * FROM likes WHERE user_id = (SELECT id FROM users WHERE username = "' . $_SESSION['username'] . '") AND car_id = ' . $id);
+    //  $hasLikedQuery = $db->query('SELECT * FROM likes WHERE user_id = (SELECT id FROM users WHERE username = "' . $_SESSION['username'] . '") AND car_id = ' . $id);
+      $stmtHasLiked = $db->prepare('SELECT * FROM likes WHERE user_id = (SELECT id FROM users WHERE username = ?) AND car_id = ?');
+      $stmtHasLiked->bind_param('si', $_SESSION['username'], $id);
+      $stmtHasLiked->execute();
+      $hasLikedQuery = $stmtHasLiked->get_result();
       $hasLiked = $hasLikedQuery->num_rows > 0;
 
       echo '<form action="like_action.php" method="post" class="mt-3">

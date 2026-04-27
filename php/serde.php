@@ -2,6 +2,8 @@
 
 include_once("db.php");
 
+define('HMAC_SECRET', 'pedazodecachodeclavequenolavaaaveriguarniperrY');
+
 function ser($username, $is_admin, $weather)
 {
   $data = [
@@ -11,15 +13,24 @@ function ser($username, $is_admin, $weather)
   ];
 
   $serializedData = base64_encode(serialize($data));
-
-  return $serializedData;
+  $hmac = hash_hmac('sha256', $serializedData, HMAC_SECRET);
+  return $serializedData . '|' . $hmac;
 }
 
-function deser($base64String)
+function deser($cookieString)
 {
-  $decodedData = base64_decode($base64String);
-  $unserializedData = unserialize($decodedData);
-  return $unserializedData;
+  $parts = explode('|', $cookieString, 2);
+
+    if (count($parts) !== 2) return null;
+    
+    [$serialized, $hmac] = $parts;
+    
+    // Verificar integridad — si no cuadra, rechazar
+    if (!hash_equals(hash_hmac('sha256', $serialized, HMAC_SECRET), $hmac)) {
+        return null;  // Cookie manipulada
+    }
+    
+    return unserialize(base64_decode($serialized));
 }
 
 function create_cookie($username)
